@@ -40,12 +40,22 @@
   window.addEventListener('load', _hideSplash);
   // Global access for error handlers
   window._hideSplash = _hideSplash;
-  // NUCLEAR OPTION: force hide via style injection after 6s
-  setTimeout(function(){
-    var style=document.createElement('style');
-    style.textContent='#wai-splash{display:none!important}';
-    document.head.appendChild(style);
-  }, 6000);
+  // NUCLEAR OPTION: force hide via style injection
+  // Fires at 3s, 5s, and 8s - works even if all other JS fails
+  function _nukeLoader(){
+    try{
+      var style=document.createElement('style');
+      style.textContent='#wai-splash,#pageLoader{display:none!important;opacity:0!important;pointer-events:none!important}body{overflow:auto!important}';
+      (document.head||document.documentElement).appendChild(style);
+    }catch(e){}
+  }
+  setTimeout(_nukeLoader, 3000);
+  setTimeout(_nukeLoader, 5000);
+  setTimeout(_nukeLoader, 8000);
+  // CATCH ANY JS ERROR — hide splash even if main script crashes
+  window.addEventListener('error', function(e){
+    setTimeout(_hideSplash, 100);
+  });
 })();
 </script>
 
